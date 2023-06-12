@@ -1,0 +1,110 @@
+
+
+% Consul Architecture
+% Pretty Good: http://man.hubwiz.com/docset/Consul.docset/Contents/Resources/Documents/docs/internals/architecture.html
+% [Consul Architecture](https://developer.hashicorp.com/consul/docs/architecture)
+% [Consul Vocabulary](https://developer.hashicorp.com/consul/docs/install/glossary)
+% [Consensus Protocol](https://developer.hashicorp.com/consul/docs/architecture/consensus)
+% **Fokus: [KVStore](https://developer.hashicorp.com/consul/docs/dynamic-app-config/kv)**
+% - 
+
+\begin{frame} % fragile bei Verbatim, code, etc.
+	\frametitle{Boxes}
+	\begin{columns}[t]
+		\begin{column}{0.45\textwidth}
+			\begin{block}[Some Title]
+				This is an important information
+			\end{block}
+			\begin{alertblock}[Argh]
+				Gotcha!
+			\end{alertblock}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{definition}
+				I'm a definition with no title
+			\end{definition}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Consul}
+	\framesubtitle{Overview}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Consul}
+	\framesubtitle{Terminology \& Architecture}
+	% Agent (Server/Client), Datacenters
+\end{frame}
+
+\begin{frame}
+	\frametitle{Consul}
+	\framesubtitle{Communication}
+	% Two Types: Raft for Consensus, Serf for Gossip
+	\begin{columns}[b]
+		\begin{column}{0.5\textwidth}
+			\emph{Raft} (Consensus)
+			\begin{itemize}
+				\item test123
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.5\textwidth}
+			\emph{Surf} (Gossip)
+			\begin{itemize}
+				\item test123
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Consul}
+	\framesubtitle{KV - Usage}
+
+	\begin{minted}[highlightlines={1,2-3,5-10}]{bash}
+		$ consul agent -dev
+
+		# other terminal:
+		$ consul kv put my/key 123
+		$ curl -v http://localhost:8500/v1/kv/my/key
+
+		*   Trying 127.0.0.1:8500...
+		* Connected to localhost (127.0.0.1) port 8500 (#0)
+		> GET /v1/kv/my/key HTTP/1.1
+		> Host: localhost:8500
+		> User-Agent: curl/7.88.1
+		> Accept: */*
+		> 
+		< HTTP/1.1 200 OK
+		< Content-Type: application/json
+		< Vary: Accept-Encoding
+		< X-Consul-Default-Acl-Policy: allow
+		< X-Consul-Index: 19
+		< X-Consul-Knownleader: true
+		< X-Consul-Lastcontact: 0
+		< X-Consul-Query-Backend: blocking-query
+		< Date: Mon, 12 Jun 2023 14:45:21 GMT
+		< Content-Length: 163
+		< 
+		[
+			{
+				"LockIndex": 0,
+				"Key": "my/key",
+				"Flags": 0,
+				"Value": "MTIz",
+				"CreateIndex": 19,
+				"ModifyIndex": 19
+			}
+		]
+		* Connection #0 to host localhost left intact
+
+		# Long Polling example:
+		$ curl -v http://localhost:8500/v1/kv/my/key?index=19
+		# other terminal
+		$ consul kv put my/key 456
+	\end{minted}
+	% Start agent with CLI
+	% put key with path
+	% Metadata response: https://developer.hashicorp.com/consul/api-docs/kv#metadata-response
+\end{frame}
