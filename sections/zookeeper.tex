@@ -1,0 +1,85 @@
+\subsection{Overview}
+\begin{frame}
+	\frametitle{History}
+	\begin{enumerate}
+		\item December 2006 - first commit
+		\item November 2007 - 0.0.1 on Sourceforge
+		\item June 2008 - moved to Apache
+		\item June 2010 - (Best paper award) Erstes Paper https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf
+		\item November 2010 - ZooKeeper moves to top level project
+		\item Januar 2023 - release-3.8.1
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Popularity}
+	\framesubtitle{According to Google}
+	\centering
+	\pgfplotsset{width=\textwidth, height=.7\textheight, compat=1.18}
+	\pgfplotstableread[col sep=comma,]{../images/Zookeeperpopularitygoogle.csv}\datatable
+	\tikzstyle{every pin}=[
+	rounded corners,
+	fill=white,
+	draw=black,
+	font=\footnotesize,
+	]
+	\tikzstyle{small dot}=[fill=black,circle,scale=0.3]
+	\href{https://trends.google.com/trends/explore?cat=5&date=all&q=Zookeeper}{
+		\begin{tikzpicture}
+			\begin{axis}[
+					axis background/.style={fill=accent!3},
+					xlabel=Year,
+					ylabel=Search Queries,
+					axis line style={rounded corners},
+					ytick=\empty,
+					xtick={0, 234},
+					xticklabels={01/2004, 06/2023},
+					x tick label style = {font=\footnotesize, align=center},
+					extra x ticks={90, 163.15},
+					extra x tick labels={09/2011, 08/2017},
+					extra x tick style={grid=major},
+				]
+				\addplot[color=accent, smooth] table [x=a, y=b, col sep=comma, x expr=\coordindex]{\datatable};
+				\node [coordinate, pin=150:{Peak}, small dot] at (axis cs:163.15,81) {};
+			\end{axis}
+		\end{tikzpicture}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{What is zookeeper?}
+	\framesubtitle{Zookeeper is \ldots}
+	\textcolor<2>{gray}{\ldots~a (1)~\textcolor<2>{accent}{highly available}, (2)~\textcolor<2>{accent}{scalable},
+	(3)~\textcolor<2>{accent}{distributed}, (4)~\textcolor<2>{accent}{configuration}, (5)~consensus, (6)~group
+	membership, (7)~leader election, (8)~naming, and (9)~coordination
+	\textcolor<2>{accent}{service}}
+\end{frame}
+
+\begin{frame}
+	\frametitle{What is zookeper again?}
+	\begin{columns}[c]
+		\begin{column}{0.45\textwidth}
+			\begin{itemize}
+				\item API without partial reads and \tikz\node[inline](A){writes};
+				\item Ordered updates and strong persistence
+					guarantees\tikz\node[inline](B){\phantom{l}};
+				\item Filesystem like data\tikz\node[inline](C){model};
+				\item Watches for data\tikz\node[inline](D){changes};
+				\item Access\tikz\node[inline](E){control};
+				\item Quorum-based\tikz\node[inline](F){replication};
+				\item Leader\tikz\node[inline](G){election};
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{enumerate}
+				\item \tikz\node[inline](Z){Highly available};
+				\item \tikz\node[inline](Y){Scalable};
+				\item \tikz\node[inline](X){Distributed};
+				\item \tikz\node[inline](W){Configuration service};
+			\end{enumerate}
+		\end{column}
+	\end{columns}
+	\begin{tikzpicture}[overlay, remember picture]
+		\draw[textarrow] (Z) to (A);
+		\draw[textarrow] (X) to (B);
+	\end{tikzpicture}
+\end{frame}
