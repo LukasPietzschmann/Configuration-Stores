@@ -8,24 +8,6 @@
 % **Fokus: [KVStore](https://developer.hashicorp.com/consul/docs/dynamic-app-config/kv)**
 % - 
 
-\begin{frame} % fragile bei Verbatim, code, etc.
-	\frametitle{Boxes}
-	\begin{columns}[t]
-		\begin{column}{0.45\textwidth}
-			\begin{block}[Some Title]
-				This is an important information
-			\end{block}
-			\begin{alertblock}[Argh]
-				Gotcha!
-			\end{alertblock}
-		\end{column}
-		\begin{column}{0.45\textwidth}
-			\begin{definition}
-				I'm a definition with no title
-			\end{definition}
-		\end{column}
-	\end{columns}
-\end{frame}
 
 \begin{frame}
 	\frametitle{Consul}
@@ -72,6 +54,23 @@
 			\end{itemize}
 		\end{column}
 	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Consul}
+	\framesubtitle{Raft Consensus}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[xshift=-1.5cm,yshift=-1.5cm](logo) at (current page.north east){%
+		\includegraphics[width=3cm]{assets/raft_logo.pdf}};
+		\node[draw=none,yshift=0.5cm,text width=3cm] at (logo.south) {\baselineskip=1pt\tiny\url{commons.wikimedia.org/w/index.php?curid=105476108}\par};
+	\end{tikzpicture}
+
+	\begin{itemize}
+		\item Consensus algorithm for state machine replication
+		\item Not Byzantine Fault Tolerant (leader is trusted)
+		\item 5 Nodes for 1 Crash, 7 for 2 Crash Tolerance
+	\end{itemize}
+	% Logo Credits: 
 \end{frame}
 
 \begin{frame}
