@@ -32,10 +32,26 @@
 	\framesubtitle{Overview}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[shrink]
 	\frametitle{Consul}
 	\framesubtitle{Terminology \& Architecture}
+	\begin{columns}[T]
+		\begin{column}{0.7\textwidth}
+			\includegraphics{assets/consul_architecture.png}
+		\end{column}
+		% \begin{column}{0.3\textwidth}
+		% 	\begin{itemize}
+		% 		\item Datacenter
+		% 		\item Agent \begin{itemize}
+		% 			\item Client
+		% 			\item Server
+		% 		\end{itemize}
+		% 	\end{itemize}
+		% \end{column}
+	\end{columns}
 	% Agent (Server/Client), Datacenters
+	% Clients are Stateless and Forward RPC calls to Server Agents
+	% Servers participate in Raft Quorum. Thus, they save cluster state (like KV keys)
 \end{frame}
 
 \begin{frame}
@@ -58,53 +74,56 @@
 	\end{columns}
 \end{frame}
 
+\begin{frame}
+		\frametitle{Consul}
+		\framesubtitle{Consistency}
+
+		\emph{Writes} to the replicated log go through Raft
+
+		Three consistency modes for \emph{reads}:
+		\begin{description}
+			\item[default] Use of \emph{leader leasing}: time window where the leader assumes that they are still the leader (risk of partitioning and 2 concurrent leaders $\Rightarrow$ stale reads)
+			\item[consistent] Before responding, the leader has to verify with a quorum of nodes that they are still the leader
+			\item[stale] Any server agent (leader \& follower) can respond
+		\end{description}
+		%\textcite[Consensus Protocol]{ConsulDoc}
+\end{frame}
+
 \begin{frame}[fragile]
 	\frametitle{Consul}
 	\framesubtitle{KV - Usage}
 
-	\begin{minted}[highlightlines={1,2-3,5-10}]{bash}
-		$ consul agent -dev
+	\begin{columns}[t]
+		\begin{column}{0.45\textwidth}
+			\begin{minted}{bash}
+$ consul agent -dev
 
-		# other terminal:
-		$ consul kv put my/key 123
-		$ curl -v http://localhost:8500/v1/kv/my/key
+# other terminal:
+$ consul kv put my/key 123
+$ consul kv get my/key
+123
+			\end{minted}
+		\end{column}
+		\begin{column}{0.55\textwidth}
+			CLI or HTTP API
 
-		*   Trying 127.0.0.1:8500...
-		* Connected to localhost (127.0.0.1) port 8500 (#0)
-		> GET /v1/kv/my/key HTTP/1.1
-		> Host: localhost:8500
-		> User-Agent: curl/7.88.1
-		> Accept: */*
-		> 
-		< HTTP/1.1 200 OK
-		< Content-Type: application/json
-		< Vary: Accept-Encoding
-		< X-Consul-Default-Acl-Policy: allow
-		< X-Consul-Index: 19
-		< X-Consul-Knownleader: true
-		< X-Consul-Lastcontact: 0
-		< X-Consul-Query-Backend: blocking-query
-		< Date: Mon, 12 Jun 2023 14:45:21 GMT
-		< Content-Length: 163
-		< 
-		[
-			{
-				"LockIndex": 0,
-				"Key": "my/key",
-				"Flags": 0,
-				"Value": "MTIz",
-				"CreateIndex": 19,
-				"ModifyIndex": 19
-			}
-		]
-		* Connection #0 to host localhost left intact
+			Responses contain metadata like last writer, ...
+			% Metadata response: https://developer.hashicorp.com/consul/api-docs/kv#metadata-response
+		\end{column}
+	\end{columns}
+\end{frame}
 
-		# Long Polling example:
-		$ curl -v http://localhost:8500/v1/kv/my/key?index=19
-		# other terminal
-		$ consul kv put my/key 456
+\begin{frame}[fragile]
+	\frametitle{Consul}
+	\framesubtitle{KV - Long Polling}
+	\begin{minted}{bash}
+$ curl -v http://localhost:8500/v1/kv/my/key
+# ...
+< X-Consul-Index: 19
+# ...
+
+$ curl -v http://localhost:8500/v1/kv/my/key?index=19
+# blocks until value is changed or timeout is reached
+# (max. 10 minutes)
 	\end{minted}
-	% Start agent with CLI
-	% put key with path
-	% Metadata response: https://developer.hashicorp.com/consul/api-docs/kv#metadata-response
 \end{frame}
