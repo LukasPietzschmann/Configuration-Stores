@@ -5,14 +5,26 @@
 
 \begin{frame}
 	\frametitle{}
-	\begin{tikzpicture}[node distance=4cm]
-		\graph[spring layout, nodes={roundednode}]{
-		etcd -- {HTTP / gRPC, Kubernetes,
-		use cases -- {service discovery, coordination, shared configuration},
-		key/value store -- {consistent, distributed, highly available}
-		};
-		};
-	\end{tikzpicture}
+	\centering
+	% \tikzset{concept/.append style={fill={none}}}
+	\scalebox{.9}{\begin{tikzpicture}
+		\path [small mindmap, concept color=accent!20, text=black]
+		node [concept] {etcd} [clockwise from=0]
+		child [concept color=red!20] {
+				node [concept] {Use cases} [clockwise from=90]
+				child { node [concept] {Coordination} }
+				child { node [concept] {Shared configuration} }
+				child { node [concept] {Service discovery} }
+			}
+		child [concept color=green!20] {
+				node [concept] {Key/Val store} [clockwise from=-30]
+				child { node [concept] {Consistent} }
+				child { node [concept] {Distributed} }
+				child { node [concept] {Highly available} }
+			}
+		child[concept color=darkmaroon!20] { node [concept] {HTTP / gRPC} }
+		child[concept color=orange!20] { node [concept] {Kubernetes} };
+	\end{tikzpicture}}
 \end{frame}
 
 \subsection{Use cases}
