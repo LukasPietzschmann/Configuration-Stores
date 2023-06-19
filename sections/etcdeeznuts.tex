@@ -1,53 +1,54 @@
 \subsection{Overview}
 \begin{frame}
-    \frametitle{History}
+	\frametitle{History}
 \end{frame}
 
 \begin{frame}
-    \frametitle{}
-    \begin{tikzpicture}[node distance=4cm]
-        \graph[spring layout, nodes={roundednode}]{
-            etcd -- {HTTP / gRPC, Kubernetes,
-                use cases -- {service discovery, coordination, shared configuration},
-                key/value store -- {consistent, distributed, highly available}
-            };
-        };
-    \end{tikzpicture}
+	\frametitle{}
+	\begin{tikzpicture}[node distance=4cm]
+		\graph[spring layout, nodes={roundednode}]{
+		etcd -- {HTTP / gRPC, Kubernetes,
+		use cases -- {service discovery, coordination, shared configuration},
+		key/value store -- {consistent, distributed, highly available}
+		};
+		};
+	\end{tikzpicture}
 \end{frame}
 
 \subsection{Use cases}
 \begin{frame}
-    \frametitle{Service discovery}
+	\frametitle{Service discovery}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Distributed coordination}
-    \centering
-    \begin{tikzpicture}
-        \node [roundednode] (ETC) [] {ETCD};
+	\frametitle{Distributed coordination}
+	\centering
+	\begin{tikzpicture}
+		\node [roundednode] (ETC) [draw=accent, fill=accent!10] {ETCD};
 
-        \node [roundednode] (OP1) [above=of ETC, yshift=.5cm] {Order processing 1};
-        \node [roundednode] (OP0) [left=of OP1] {Order processing 0};
-        \node [roundednode] (OP2) [right=of OP1] {Order processing 2};
-        \node [draw=none] (MS) [above=of OP1] {Micro services};
-        \node [roundednode, dashed, node on layer=background, fill=gray!10, draw=gray, fit=(OP1)(OP2)(OP0)(MS)] {};
+		\node [roundednode] (OP1) [above=of ETC, yshift=.5cm] {Order processing 1};
+		\node [roundednode] (OP0) [left=of OP1] {Order processing 0};
+		\node [roundednode] (OP2) [right=of OP1] {Order processing 2};
+		\node [draw=none] (MS) [above=of OP1] {Micro services};
+		\node [roundednode, dashed, node on layer=background, fill=gray!10, draw=darkgray, fit=(OP1)(OP2)(OP0)(MS)] {};
 
-        \node [draw=none, visible on=<2->] (T) [right=of ETC, yshift=-1cm] {order-processing/order123};
+		\node [draw=none, visible on=<2->] (T) [right=of ETC, yshift=-1cm] {order-processing/order123};
 
-        \draw [doublearrow] (OP1) to (ETC);
-        \draw [doublearrow] (OP2) to (ETC);
-        \draw [doublearrow] (OP0) to (ETC);
+		\draw [doublearrow] (OP1) to (ETC);
+		\draw [doublearrow] (OP2) to (ETC);
+		\draw [doublearrow] (OP0) to (ETC);
 
-        \begin{scope}[visible on=<2->]
-            \draw [arrow, dashed] (T) to (ETC);
-            \draw [arrow, dashed] (OP0) to [bend left=10] (ETC);
-            \draw [arrow, dashed] (OP1) to [bend left=20] (ETC);
-            \draw [arrow, dashed] (OP2) to [bend right=10] (ETC);
-        \end{scope}
-        \draw [arrow, dashed, visible on=<3->] (ETC) to [bend left=30] node [sloped, below, midway] {order124} (OP0);
-    \end{tikzpicture}
+		\draw [arrow, dashed, visible on=<2->] (T) to (ETC);
+		\begin{scope}[visible on=<3->]
+			\draw [arrow, dashed] (OP0) to [bend left=10] (ETC);
+			\draw [arrow, dashed] (OP1) to [bend left=20] (ETC);
+			\draw [arrow, dashed] (OP2) to [bend right=10] (ETC);
+		\end{scope}
+
+		\draw [arrow, dashed, visible on=<4->] (ETC) to [bend left=30] node [sloped, below, midway] {order124} (OP0);
+	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
-    \frametitle{Configuration management}
+	\frametitle{Configuration management}
 \end{frame}
