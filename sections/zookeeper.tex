@@ -122,5 +122,118 @@
 \end{frame}
 
 \subsection{Data model}
+\begin{frame}
+	\frametitle{Data model}
+	\begin{columns}[c]
+		\begin{column}{0.45\textwidth}
+			\tikzstyle{every node}=[roundednode]
+			\begin{tikzpicture}[level distance=1cm, sibling distance=1.2cm]
+				\node (R) {/}
+				child {node (Z) {zoo}
+						child {node (D) {cow}}
+						child {node (C) {duck}}
+					};
+				\begin{scope}[visible on=<-1>]
+					\node [draw=none] (SR) [right=of R, xshift=1.1cm] {/};
+					\node [draw=none] (SZ) [right=of Z, xshift=1cm] {/zoo};
+					\node [draw=none] (SD) [below=of SZ.south west, anchor=west, yshift=-1mm] {/zoo/duck};
+					\node [draw=none] (SC) [below=of SD.south west, anchor=west, yshift=-2mm] {/zoo/cow};
 
-\subsection{Operations}
+					\draw [textarrow] (SR) to (R);
+					\draw [textarrow] (SZ) to (Z);
+					\draw [textarrow] (SD) to (C);
+					\draw [textarrow] (SC) to [bend left=20] (D);
+				\end{scope}
+				\begin{scope}[visible on=<2>]
+					\node [draw=none] (SZ) [right=of Z, xshift=1cm] {Znodes};
+
+					\draw [textarrow] (SZ) to (R);
+					\draw [textarrow] (SZ) to (Z);
+					\draw [textarrow] (SZ) to (C);
+					\draw [textarrow] (SZ) to [bend left=55] (D);
+				\end{scope}
+			\end{tikzpicture}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{itemize}
+				\item \only<1>{File system nodes} \only<2->{\st{File system nodes} Namespaces}
+				\item<2-> Three types of Znodes:
+					\begin{itemize}
+						\item<2-> Persistent
+						\item<2-> Ephemeral
+						\item<2-> Sequential
+					\end{itemize}
+				\item<3-> Not designed to store arbitrary blobs
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Watches}
+	\begin{columns}[c]
+		\begin{column}{0.25\textwidth}
+			\tikzstyle{every node}=[roundednode]
+			\begin{tikzpicture}[level distance=1cm, sibling distance=1.2cm]
+				\node (R) {/}
+				child {node (Z) {zoo}
+						child {node (D) {cow}}
+						child {node (C) {duck}}
+					};
+				\duck [scale=.5, xshift=3cm, yshift=-3cm, name=billy, sunglasses=black] (Duck)
+
+				\node [draw=none, visible on=<2>] (B) [right=of R, xshift=1cm, yshift=1cm] {Billy};
+				\draw [textarrow, visible on=<2>] (B) to (billy-head);
+
+				\draw [arrow, dashed, visible on=<-3>] (billy-bill) to (C);
+			\end{tikzpicture}
+		\end{column}
+		\begin{column}{0.65\textwidth}
+			\begin{sequencediagram}
+				\newthread{b}{Client:Billy}
+				\newthread{z}{ZooKeeper}
+				\newthread{c}{Client:Client 2}
+				\begin{call}{b}{watch}{z}{}
+				\end{call}
+				\begin{call}{c}{add}{z}{}
+				\end{call}
+				\mess {z}{notify}{b}
+				\begin{call}{b}{get}{z}{}
+				\end{call}
+				\begin{call}{b}{watch}{z}{}
+				\end{call}
+			\end{sequencediagram}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Operations}
+	\begin{columns}[c]
+		\begin{column}{0.45\textwidth}
+			\onslide<1->{\begin{block}[Znodes]
+				\begin{itemize}
+					\item create
+					\item delete
+					\item exists
+					\item getChildren
+				\end{itemize}
+			\end{block}}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\onslide<2->{\begin{block}[Data]
+				\begin{itemize}
+					\item getData
+					\item setData
+				\end{itemize}
+			\end{block}}
+			\onslide<3->{\begin{block}
+				\begin{itemize}
+					\item getAcl
+					\item setAcl
+					\item sync
+				\end{itemize}
+			\end{block}}
+		\end{column}
+	\end{columns}
+\end{frame}
