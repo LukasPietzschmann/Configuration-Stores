@@ -46,8 +46,8 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{What is zookeeper?}
-	\framesubtitle{Zookeeper is \ldots}
+	\frametitle{What is ZooKeeper?}
+	\framesubtitle{ZooKeeper is \ldots}
 	\textcolor<2>{gray}{\ldots~a (1)~highly available, (2)~scalable,
 		(3)~\textcolor<2>{accent}{distributed}, (4)~\textcolor<2>{accent}{configuration},
 		(5)~consensus, (6)~group membership, (7)~leader election, (8)~naming, and
@@ -55,28 +55,28 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{What is zookeeper again?}
-	\begin{columns}[c]
-		\begin{column}{0.45\textwidth}
-			\begin{block}[Distributed]
+	\frametitle{What is ZooKeeper again?}
+	\framesubtitle{Use cases}
+	\centering
+	\begin{tcolorbox}[colback=accent!5!white,colframe=accent!75!black,width=.7\linewidth, title=Solve various coordination problems in large distributed system]
+		\begin{columns}[c]
+			\begin{column}{0.45\textwidth}
 				\begin{itemize}
-					\item Fault-tolerant architecture
-					\item Ordered updates and strong persistence guarantees
-					\item Quorum-based replication
 					\item Leader election
+					\item Barrier
+					\item Queue
+					\item Lock
 				\end{itemize}
-			\end{block}
-		\end{column}
-		\begin{column}{0.45\textwidth}
-			\begin{block}[Configuration store]
+			\end{column}
+			\begin{column}{0.45\textwidth}
 				\begin{itemize}
-					\item Filesystem-like data model
-					\item Watches for data changes
-					\item Access control
+					\item Service discovery
+					\item Group services
+					\item<2> Configuration Stores
 				\end{itemize}
-			\end{block}
-		\end{column}
-	\end{columns}
+			\end{column}
+		\end{columns}
+	\end{tcolorbox}
 \end{frame}
 
 \subsection{Data model}
@@ -91,7 +91,7 @@
 						child {node (D) {cow}}
 						child {node (C) {duck}}
 					};
-				\begin{scope}[visible on=<-1>]
+				\begin{scope}[visible on=<-2>]
 					\node [draw=none] (SR) [right=of R, xshift=1.1cm] {/};
 					\node [draw=none] (SZ) [right=of Z, xshift=1cm] {/zoo};
 					\node [draw=none] (SD) [below=of SZ.south west, anchor=west, yshift=-1mm] {/zoo/duck};
@@ -102,7 +102,7 @@
 					\draw [textarrow] (SD) to (C);
 					\draw [textarrow] (SC) to [bend left=20] (D);
 				\end{scope}
-				\begin{scope}[visible on=<2>]
+				\begin{scope}[visible on=<3>]
 					\node [draw=none] (SZ) [right=of Z, xshift=1cm] {Znodes};
 
 					\draw [textarrow] (SZ) to (R);
@@ -114,15 +114,46 @@
 		\end{column}
 		\begin{column}{0.45\textwidth}
 			\begin{itemize}
-				\item \only<1>{File system nodes} \only<2->{\st{File system nodes} Namespaces}
-				\item<2-> Three types of Znodes:
+				\item \only<1>{File system nodes} \only<2->{\textcolor{gray}{\st{File system nodes}} Namespaces}
+				\item<3-> Three types of Znodes:
 					\begin{itemize}
-						\item<2-> Persistent
-						\item<2-> Ephemeral
-						\item<2-> Sequential
+						\item<3-> Persistent
+						\item<3-> Ephemeral
+						\item<3-> Sequential
 					\end{itemize}
-				\item<3-> Not designed to store arbitrary blobs
+				\item<4-> Not designed to store arbitrary blobs
 			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Operations}
+	\begin{columns}[c]
+		\begin{column}{0.45\textwidth}
+			\onslide<1->{\begin{block}[Znodes]
+					\begin{itemize}
+						\item create
+						\item delete
+						\item exists
+						\item getChildren
+					\end{itemize}
+				\end{block}}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\onslide<2->{\begin{block}[Data]
+					\begin{itemize}
+						\item getData
+						\item setData
+					\end{itemize}
+				\end{block}}
+			\onslide<3->{\begin{block}
+					\begin{itemize}
+						\item getAcl
+						\item setAcl
+						\item sync
+					\end{itemize}
+				\end{block}}
 		\end{column}
 	\end{columns}
 \end{frame}
@@ -136,14 +167,17 @@
 				\node (R) {/}
 				child {node (Z) {zoo}
 						child {node (D) {cow}}
-						child {node (C) {duck}}
+						child {node (C) {duck}
+								child [visible on=<5->]{node (DD) {Daisy}}
+							}
 					};
 				\duck [scale=.5, xshift=3cm, yshift=-3cm, name=billy, sunglasses=black] (Duck)
 
 				\node [draw=none, visible on=<2>] (B) [right=of R, xshift=1cm, yshift=1cm] {Billy};
 				\draw [textarrow, visible on=<2>] (B) to (billy-head);
 
-				\draw [arrow, dashed, visible on=<-3>] (billy-bill) to (C);
+				\draw [arrow, visible on=<6>] (DD) to [bend right=20] (billy-wing);
+				\draw [arrow, visible on=<{4-5,7-}>] (billy-wing) to (C);
 			\end{tikzpicture}
 		\end{column}
 		\begin{column}{0.65\textwidth}
@@ -165,37 +199,6 @@
 	\end{columns}
 \end{frame}
 
-\begin{frame}
-	\frametitle{Operations}
-	\begin{columns}[c]
-		\begin{column}{0.45\textwidth}
-			\onslide<1->{\begin{block}[Znodes]
-				\begin{itemize}
-					\item create
-					\item delete
-					\item exists
-					\item getChildren
-				\end{itemize}
-			\end{block}}
-		\end{column}
-		\begin{column}{0.45\textwidth}
-			\onslide<2->{\begin{block}[Data]
-				\begin{itemize}
-					\item getData
-					\item setData
-				\end{itemize}
-			\end{block}}
-			\onslide<3->{\begin{block}
-				\begin{itemize}
-					\item getAcl
-					\item setAcl
-					\item sync
-				\end{itemize}
-			\end{block}}
-		\end{column}
-	\end{columns}
-\end{frame}
-
 \subsection{Architecture}
 \begin{frame}
 	\contourlength{.09em}
@@ -208,32 +211,75 @@
 			\node [roundednode, draw=accent, fill=accent!3] (S3) [right=of S2] {Server 3};
 			\node [roundednode] (S4) [right=of S3] {Server 4};
 			\node [roundednode] (S5) [right=of S4] {Server 5};
-			\node [draw=none] (L) [above=of S2, yshift=1cm] {Leader};
-			\draw [textarrow] (L) to[bend left=20] (S3);
-			\node [draw=none] (ZS) [above=of S3] {\contour*{white}{\textcolor{black}{Zookeeper
-						Service}}};
+			\node [draw=none, visible on=<2>] (L) [above=of S2, yshift=1cm] {Leader};
+			\draw [textarrow, visible on=<2>] (L) to[bend left=20] (S3);
+			\node [draw=none] (ZS) [above=of S3] {\contour*{white}{\textcolor{black}{Ensemble}}};
 			\node [roundednode, node on layer=background, dashed, draw=darkgray, fill=gray!10, fit=(S1)(S2)(S3)(S4)(S5)(ZS)] {};
 
-			\draw [arrow] (S1) to [bend left=20] (S3);
-			\draw [arrow] (S2) to (S3);
-			\draw [arrow] (S4) to (S3);
-			\draw [arrow] (S5) to [bend right=20] (S3);
+			\begin{scope}[visible on=<5->]
+				\draw [arrow] (S1) to [bend left=20] (S3);
+				\draw [arrow] (S2) to (S3);
+				\draw [arrow] (S4) to (S3);
+				\draw [arrow] (S5) to [bend right=20] (S3);
+			\end{scope}
 
-			\node [roundednode] (C4) [below=of S3, yshift=-.5cm] {Client 4};
-			\node [roundednode] (C5) [right=of C4] {Client 5};
-			\node [roundednode] (C6) [right=of C5] {Client 6};
-			\node [roundednode] (C7) [right=of C6] {Client 7};
-			\node [roundednode] (C3) [left=of C4] {Client 3};
+			\begin{scope}[visible on=<3->]
+				\node [roundednode] (C4) [below=of S3, yshift=-.5cm] {Client 4};
+				\node [roundednode] (C5) [right=of C4] {Client 5};
+				\node [roundednode] (C6) [right=of C5] {Client 6};
+				\node [roundednode] (C7) [right=of C6] {Client 7};
+				\node [roundednode] (C3) [left=of C4] {Client 3};
+				\node [roundednode] (C2) [left=of C3] {Client 2};
+				\node [roundednode] (C1) [left=of C2] {Client 1};
+			\end{scope}
+
+			\begin{scope}[visible on=<4->]
+				\draw [arrow] (C1) to (S1);
+				\draw [arrow] (C2) to (S1);
+				\draw [arrow] (C3) to (S2);
+				\draw [arrow] (C4) to (S2);
+				\draw [arrow] (C5) to (S4);
+				\draw [arrow] (C6) to (S5);
+				\draw [arrow] (C7) to (S5);
+			\end{scope}
+		\end{scope}
+	\end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Architecture}
+	\framesubtitle{An example}
+	\centering
+	\begin{tikzpicture}
+		\begin{scope}
+			\node [roundednode] (S1) [] {Server 1};
+			\node [roundednode] (S2) [right=of S1] {Server 2};
+			\node [roundednode, draw=accent, fill=accent!3] (S3) [right=of S2] {Server 3};
+			\node [draw=none] (ZS) [above=of S2, yshift=.5cm] {Ensemble};
+			\node [roundednode, node on layer=background, dashed, draw=darkgray, fill=gray!10, fit=(S1)(S2)(S3)(ZS)] {};
+
+			\node [roundednode] (C3) [below=of S3, yshift=-1cm] {Client 3};
 			\node [roundednode] (C2) [left=of C3] {Client 2};
 			\node [roundednode] (C1) [left=of C2] {Client 1};
 
-			\draw [arrow] (C1) to (S1);
-			\draw [arrow] (C2) to (S1);
-			\draw [arrow] (C3) to (S2);
-			\draw [arrow] (C4) to (S2);
-			\draw [arrow] (C5) to (S4);
-			\draw [arrow] (C6) to (S5);
-			\draw [arrow] (C7) to (S5);
+			\draw [arrow] (C2) to node [sloped, above, midway, visible on=<2>] {create} (S1);
+			\draw [arrow] (S1) to [bend left=20] node [sloped, above, midway, visible on=<3>] {create} (S3);
+
+			\begin{scope}[visible on=<4>]
+				\draw [arrow] (S3) to [bend right=10] (S2);
+				\draw [arrow] (S3) to [bend right=40] (S1);
+			\end{scope}
+
+			\begin{scope}[visible on=<1>]
+				\draw [arrow] (C1) to (S1);
+				\draw [arrow] (C3) to (S2);
+				\draw [arrow] (S2) to (S3);
+			\end{scope}
+			\begin{scope}[visible on=<2->]
+				\draw [arrow, dashed, draw=darkgray] (C1) to (S1);
+				\draw [arrow, dashed, draw=darkgray] (C3) to (S2);
+				\draw [arrow, dashed, draw=darkgray] (S2) to (S3);
+			\end{scope}
 		\end{scope}
 	\end{tikzpicture}
 \end{frame}
