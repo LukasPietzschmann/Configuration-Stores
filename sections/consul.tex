@@ -8,15 +8,20 @@
 % **Fokus: [KVStore](https://developer.hashicorp.com/consul/docs/dynamic-app-config/kv)**
 % - 
 
+\subsection{Overview}
 
 \begin{frame}
-	\frametitle{Consul}
-	\framesubtitle{Overview}
+	\frametitle{General}
+	\begin{itemize}
+		\item Released in 2014 as a Service Discovery Platform
+		\item Implemented in \emph{Go}
+		\item Now: DNS, Health Checks, Distributed KV Store, ...
+		% DNS to return healthy services
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Consul}
-	\framesubtitle{Terminology \& Architecture}
+	\frametitle{Architecture}
 	\contourlength{.09em}
 	\begin{tikzpicture}[overlay]
 		\node[roundednode, xshift=-1.9cm,yshift=-1.5cm, text width=3cm](logo) at
@@ -83,53 +88,35 @@
 		\end{scope}
 	\end{tikzpicture}
 
-
-
-
-
-
-	% \begin{columns}[T]
-	% 	\begin{column}{0.7\textwidth}
-	% 		\includegraphics{assets/consul_architecture.png}
-	% 	\end{column}
-	% \begin{column}{0.3\textwidth}
-	% 	\begin{itemize}
-	% 		\item Datacenter
-	% 		\item Agent \begin{itemize}
-	% 			\item Client
-	% 			\item Server
-	% 		\end{itemize}
-	% 	\end{itemize}
-	% \end{column}
-	% \end{columns}
 	% Agent (Server/Client), Datacenters
 	% Clients are Stateless and Forward RPC calls to Server Agents
 	% Servers participate in Raft Quorum. Thus, they save cluster state (like KV keys)
 \end{frame}
 
 \begin{frame}
-	\frametitle{Consul}
-	\framesubtitle{Communication}
+	\frametitle{Consistency}
 	% Two Types: Raft for Consensus, Serf for Gossip
 	\begin{columns}[b]
 		\begin{column}{0.5\textwidth}
-			\emph{Raft} (Consensus)
+			\emph{Raft} Protocol (Consensus)
 			\begin{itemize}
-				\item test123
+				\item Replicated Cluster State
+				\item Example: KV store, service and node IP addresses, configuration
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.5\textwidth}
-			\emph{Surf} (Gossip)
+			\emph{Surf} Protocol (Gossip)
 			\begin{itemize}
-				\item test123
+				\item Distribute and perform \emph{node health checks}
+				\item Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
+				% https://developer.hashicorp.com/consul/docs/services/usage/checks
 			\end{itemize}
 		\end{column}
 	\end{columns}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Consul}
-	\framesubtitle{Raft Consensus}
+	\frametitle{Raft Consensus}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[xshift=-1.5cm,yshift=-1.5cm](logo) at (current page.north east){%
 		\includegraphics[width=3cm]{assets/raft_logo.pdf}};
@@ -140,28 +127,35 @@
 		\item Consensus algorithm for state machine replication
 		\item Not Byzantine Fault Tolerant (leader is trusted)
 		\item 5 Nodes for 1 Node, 7 for 2 Node Crash Tolerance
+		\item Three states
 	\end{itemize}
 	% Logo Credits: 
 \end{frame}
 
 \begin{frame}
-		\frametitle{Consul}
-		\framesubtitle{Consistency}
+		\frametitle{Consistency}
 
-		\emph{Writes} to the replicated log go through Raft
+		\begin{itemize}
+			\item \emph{Writes}: always sent to leader
+			\item \emph{Reads}: three consistency modes:
+			\begin{description}[labelsep=0.5em]
+				\setlength\itemsep{0.5em}
+				\item[default] \emph{leader leasing}: leader assumes its role for a specific time window and responds without quorum
+				\\
+				(However: risk of 2 concurrent leaders $\Rightarrow$ stale reads)
+				\item[consistent] leader has to verify its role before responding
+%				that they are still the leader 
+				\item[stale] any server agent (leader \& follower) can respond
+			\end{description}
+		\end{itemize}
 
-		Three consistency modes for \emph{reads}:
-		\begin{description}
-			\item[default] Use of \emph{leader leasing}: time window where the leader assumes that they are still the leader (risk of partitioning and 2 concurrent leaders $\Rightarrow$ stale reads)
-			\item[consistent] Before responding, the leader has to verify with a quorum of nodes that they are still the leader
-			\item[stale] Any server agent (leader \& follower) can respond
-		\end{description}
-		%\textcite[Consensus Protocol]{ConsulDoc}
+				%\textcite[Consensus Protocol]{ConsulDoc}
 \end{frame}
 
+\subsection{Usage}
+
 \begin{frame}[fragile]
-	\frametitle{Consul}
-	\framesubtitle{KV - Usage}
+	\frametitle{CLI agent}
 
 	\begin{columns}[t]
 		\begin{column}{0.45\textwidth}
@@ -184,8 +178,7 @@ $ consul kv get my/key
 \end{frame}
 
 \begin{frame}[fragile]
-	\frametitle{Consul}
-	\framesubtitle{KV - Long Polling}
+	\frametitle{Long Polling}
 	\begin{minted}{bash}
 $ curl -v http://localhost:8500/v1/kv/my/key
 # ...
