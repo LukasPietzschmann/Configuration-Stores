@@ -57,7 +57,17 @@
 \subsection{Use cases}
 \begin{frame}
 	\frametitle{Service discovery}
-	% TODO Luke
+	\centering
+	\begin{tikzpicture}
+		\node [roundednode] (PC) {Product catalog};
+		\node [draw=none, visible on=<2>] (T) [above=of PC, yshift=.5cm, xshift=.7cm] {Where is the DB?};
+		\node [draw=none, visible on=<5>] (T) [above=of PC, yshift=.5cm, xshift=.7cm] {Thanks mate!};
+		\node [roundednode] (ETC) [right=of PC, xshift=2.5cm] {etcd};
+
+		\draw [draw=gray, visible on=<{2,5}>] (T) to (PC);
+		\draw [arrow, visible on=<3>] (PC) to node [anchor=south] {get \texttt{/svc/db/}} (ETC);
+		\draw [arrow, visible on=<4>] (ETC) to [bend left=40] node [sloped, below, midway] {IP + Port} (PC);
+	\end{tikzpicture}
 \end{frame}
 
 \begin{frame}
