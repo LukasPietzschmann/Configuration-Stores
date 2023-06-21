@@ -1,13 +1,9 @@
 \subsection{Overview}
 \begin{frame}
-	\frametitle{History}
-\end{frame}
-
-\begin{frame}
 	\frametitle{}
 	\centering
 	% \tikzset{concept/.append style={fill={none}}}
-	\scalebox{.9}{\begin{tikzpicture}
+	\scalebox{.8}{\begin{tikzpicture}
 		\path [small mindmap, concept color=accent!20, text=black]
 		node [concept] {etcd} [clockwise from=0]
 		child [concept color=red!20] {
@@ -22,25 +18,56 @@
 				child { node [concept] {Distributed} }
 				child { node [concept] {Highly available} }
 			}
-		child[concept color=darkmaroon!20] { node [concept] {HTTP / gRPC} }
-		child[concept color=orange!20] { node [concept] {Kubernetes} };
+		child [concept color=darkmaroon!20] { node [concept] {gRPC} }
+		child [concept color=orange!20, clockwise from=0]{
+			node [concept] {Production users} [clockwise from=-160] 
+			child { node [concept] {Kubernetes} }
+			child { node [concept] {Yandex}	}
+			child { node [concept] {Huawei} }
+			};
 	\end{tikzpicture}}
 \end{frame}
+\begin{frame}
+	\frametitle{History}
+	\begin{enumerate}
+	\item First commit 2013 by CoreOS
+	\item 2014 etcd V0.2 - Kubernetes V0.4
+	\item 2015 First Stable Release of V2.0
+	\begin{itemize}		
+    \item includes Raft
+	\end{itemize}
 
+	\item 2018 CNCF (\textbf{C}loud \textbf{N}ative \textbf{C}omputing \textbf{F}oundation) Incubation
+	\item 2019 etcd V3.4
+	\item 2021 etcd V3.5
+	\end{enumerate}
+\end{frame}
+
+\subsection{Architecture}
+\begin{frame}
+	\frametitle{Architecture}
+	\begin{itemize}
+    \item Distributed: operates across multiple nodes (cluster)
+    \item Consistency ensured by Raft algorithm
+    \item leader election if current leader crashes
+	\item [$\blacktriangleright$] high availability, consistency, distribution
+	\end{itemize}
+\end{frame}
 \subsection{Use cases}
 \begin{frame}
 	\frametitle{Service discovery}
+% TODO Luke
 \end{frame}
 
 \begin{frame}
 	\frametitle{Distributed coordination}
 	\centering
 	\begin{tikzpicture}
-		\node [roundednode] (ETC) [draw=accent, fill=accent!10] {ETCD};
+		\node [roundednode] (ETC) [draw=accent, fill=accent!10] {etcd};
 
-		\node [roundednode] (OP1) [above=of ETC, yshift=.5cm] {Order processing 1};
-		\node [roundednode] (OP0) [left=of OP1] {Order processing 0};
-		\node [roundednode] (OP2) [right=of OP1] {Order processing 2};
+		\node [roundednode] (OP1) [above=of ETC, yshift=.5cm] {Order-processing-1};
+		\node [roundednode] (OP0) [left=of OP1] {Order-processing-0};
+		\node [roundednode] (OP2) [right=of OP1] {Order-processing-2};
 		\node [draw=none] (MS) [above=of OP1] {Micro services};
 		\node [roundednode, dashed, node on layer=background, fill=gray!10, draw=darkgray, fit=(OP1)(OP2)(OP0)(MS)] {};
 
@@ -63,4 +90,13 @@
 
 \begin{frame}
 	\frametitle{Configuration management}
+	\centering
+	\begin{tikzpicture}[node distance=2cm]
+		\node [roundednode] (ETC) [draw=accent, fill=accent!10] {etcd};
+		\node [roundednode] (IK0) [above=of ETC, yshift=.5cm] {Inventory-keeper-0};
+		\draw [arrow, visible on=<{1,2,3,4}>] (IK0) to node[anchor=west, visible on=<1>]{Put \texttt{/cfg/inv/item2/max_capacity 100}} node [anchor=west, visible on=<2-3>]{Watch \texttt{/cfg/inv/item2/max_capacity}} (ETC);
+		\node [roundednode] (ADM) [right=of ETC, visible on=<3>, xshift=3.4cm] {Admin};
+		\draw [arrow, visible on=<3>] (ADM) to node[anchor=north]{Put \texttt{../max_capacity 200}}(ETC); 
+		\draw [arrow, visible on=<4>] (ETC) to node[anchor=west, visible on=<4->]{\texttt{/cfg/inv/item2/max_capacity 200 }} (IK0);
+	\end{tikzpicture}
 \end{frame}
