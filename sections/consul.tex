@@ -13,8 +13,8 @@
 	\begin{itemize}
 		\item Released in 2014 as a Service Discovery Platform
 		\item Implemented in \emph{Go}
-		\item Now: DNS, Health Checks, Distributed KV Store, ...
-		% DNS to return healthy services
+		\item Now: DNS, Health Checks, Distributed KV Store, \ldots
+		      % DNS to return healthy services
 	\end{itemize}
 \end{frame}
 
@@ -23,19 +23,21 @@
 	% Two Types: Raft for Consensus, Serf for Gossip
 	\begin{columns}[b]
 		\begin{column}{0.5\textwidth}
-			\onslide<1->{\emph{Raft} Protocol (Consensus)}
-			\begin{itemize}
-				\item<2-> Cluster State Replication
-				\item<3-> Example: KV store, service and node IP addresses, configuration
-			\end{itemize}
+			\begin{block}[Raft Protocol]
+				\begin{itemize}
+					\item<2-> Cluster State Replication
+					\item<3-> Example: KV store, service and node IP addresses, configuration
+				\end{itemize}
+			\end{block}
 		\end{column}
-		\onslide<4->{\begin{column}{0.5\textwidth}
-			\emph{Surf} Protocol (Gossip)
-			\begin{itemize}
-				\item<5-> Distribute and perform \emph{node health checks}
-				\item<6-> Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
-				% https://developer.hashicorp.com/consul/docs/services/usage/checks
-			\end{itemize}}
+		\begin{column}{0.5\textwidth}
+			\begin{block}[Surf Protocol]
+				\begin{itemize}
+					\item<4-> Distribute and perform \emph{node health checks}
+					\item<5-> Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
+						% https://developer.hashicorp.com/consul/docs/services/usage/checks
+				\end{itemize}
+			\end{block}
 		\end{column}
 	\end{columns}
 \end{frame}
@@ -107,7 +109,8 @@
 			\end{scope}
 		\end{scope}
 	\end{tikzpicture}
-	\footnote{Based on \autocite[Consul Architecture]{ConsulDoc23}}
+	\let\thefootnote\relax\footnote{Based on \autocite[Consul Architecture]{ConsulDoc23}}
+	\addtocounter{footnote}{-1}
 
 	% Agent (Server/Client), Datacenters
 	% Clients are Stateless and Forward RPC calls to Server Agents
@@ -125,34 +128,34 @@
 	\end{tikzpicture}
 
 	\begin{itemize}
-		\item<1-> Consensus algorithm for state machine replication\footnote{\autocite{raft14}}
+		\item<1-> Consensus algorithm for state machine replication\footnote{See \autocite{raft14}}
 		\item<2-> Not Byzantine Fault Tolerant (leader is trusted)
 		\item<3-> Crash Tolerance: (N/2) + 1
-		\begin{itemize}
-			\item 3 Nodes: 1 Crash
-			\item 5 Nodes: 2 Crashes
-			\item 7 Nodes: 3 Crashes
-		\end{itemize}
+			\begin{itemize}
+				\item 3 Nodes: 1 Crash
+				\item 5 Nodes: 2 Crashes
+				\item 7 Nodes: 3 Crashes
+			\end{itemize}
 		\item<4-> Three states
 	\end{itemize}
-	% Logo Credits: 
+	% Logo Credits:
 \end{frame}
 
 \begin{frame}
-		\frametitle{Consistency}
+	\frametitle{Consistency}
 
-		\begin{itemize}
-			\item<1-> \emph{Writes}: always sent to leader
-			\item<2-> \emph{Reads}: three consistency modes:			\begin{description}[labelsep=0.5em]
+	\begin{itemize}
+		\item<1-> \emph{Writes}: always sent to leader
+		\item<2-> \emph{Reads}: three consistency modes:			\begin{description}[labelsep=0.5em]
 				\setlength\itemsep{0.5em}
 				\item[default]<3-> \emph{leader leasing}: leader assumes its role for a specific time window and responds without quorum
 				\\
 				(However: risk of 2 concurrent leaders $\Rightarrow$ stale reads)
 				\item[consistent]<4-> leader has to verify its role before responding
-%				that they are still the leader 
+				%				that they are still the leader
 				\item[stale]<5-> any server agent (leader \& follower) can respond
 			\end{description}
-		\end{itemize}
+	\end{itemize}
 \end{frame}
 
 \subsection{Usage}
@@ -161,7 +164,7 @@
 	\frametitle{CLI agent}
 	\framesubtitle{for KV store}
 
-	\begin{columns}[t]
+	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
 			\begin{minted}{bash}
 $ consul agent -dev
@@ -175,12 +178,12 @@ $ consul kv get my/key
 
 		\begin{column}{0.55\textwidth}
 			\onslide<1->{\begin{block}[KV Store]
-			\begin{itemize}
-				\item<1-> For configuration, locks, metadata, ...
-				\item<2-> Max value size of 512 KB
-				\item<3-> Requests to KV store via CLI or HTTP API
-			\end{itemize}
-		\end{block}}
+					\begin{itemize}
+						\item<1-> For configuration, locks, metadata, ...
+						\item<2-> Max value size of 512 KB
+						\item<3-> Requests to KV store via CLI or HTTP API
+					\end{itemize}
+				\end{block}}
 			% Metadata response: https://developer.hashicorp.com/consul/api-docs/kv#metadata-response
 		\end{column}
 	\end{columns}
