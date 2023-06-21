@@ -283,3 +283,39 @@
 		\end{scope}
 	\end{tikzpicture}
 \end{frame}
+
+\subsection{Configuration management}
+\begin{frame}[fragile]
+	\frametitle[Absolutely simplified]{Workflow}
+	\tikzstyle{every node}=[roundednode]
+	\begin{columns}[c]
+		\begin{column}{0.65\textwidth}
+			\begin{tikzpicture}[level distance=0.8cm, sibling distance=1.4cm, grow'=right, nodes=right]
+				\node (R) {/}
+				child {node [] {users}
+						child {node {lukas}
+								child {node {nvim}
+										child {node {expandtab: false}}
+										child {node {tabstop: 4}}
+									}
+							}
+						child {node {kai}
+								child {node {WebStorm}}
+							}
+						child {node {tim}
+								child {node {ChatGPT}}
+								child {node {VSCode}}
+							}
+					};
+			\end{tikzpicture}
+		\end{column}
+		\begin{column}{0.25\textwidth}
+			\begin{onlyenv}<2>
+				\begin{minted}{vim}
+					set noexpandtab
+					set tabstop=4
+				\end{minted}
+			\end{onlyenv}
+		\end{column}
+	\end{columns}
+\end{frame}
