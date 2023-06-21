@@ -1,16 +1,16 @@
 \begin{frame}
 	\frametitle{Why not just plain old configuration files?}
-	\onslide<1->{\begin{block}[Reasons]
+	\only<1->{\begin{block}[Reasons]
 			\begin{itemize}
-				\item Services start / crash 
-				\\ \quad $\Rightarrow$ Hostnames in configuration have to be changed frequently \& clients have to pull often
+				\item<1-> Services start / crash 
+				\\ \quad $\Rightarrow$ Hostnames in configuration have to be changed frequently \& clients have to pull often}
 				% unnecessary traffic
-				\item Configuration files have to be replicated 
+				\item<2-> Configuration files have to be replicated 
 				\\ \quad $\Rightarrow$ risk of staleness
 			\end{itemize}
-		\end{block}}
+		\end{block}
 
-	Solution: Configuration Store with monitoring $\Rightarrow$ changes can be pushed to clients
+	\onslide<4->{Solution: Configuration Store with monitoring $\Rightarrow$ changes can be pushed to clients}
 \end{frame}
 
 \begin{frame}
