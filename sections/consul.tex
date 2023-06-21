@@ -1,5 +1,3 @@
-
-
 % Consul Architecture
 % Pretty Good: http://man.hubwiz.com/docset/Consul.docset/Contents/Resources/Documents/docs/internals/architecture.html
 % [Consul Architecture](https://developer.hashicorp.com/consul/docs/architecture)
@@ -18,6 +16,28 @@
 		\item Now: DNS, Health Checks, Distributed KV Store, ...
 		% DNS to return healthy services
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Communication Types}
+	% Two Types: Raft for Consensus, Serf for Gossip
+	\begin{columns}[b]
+		\begin{column}{0.5\textwidth}
+			\onslide<1->{\emph{Raft} Protocol (Consensus)}
+			\begin{itemize}
+				\item<2-> Cluster State Replication
+				\item<3-> Example: KV store, service and node IP addresses, configuration
+			\end{itemize}
+		\end{column}
+		\onslide<4->{\begin{column}{0.5\textwidth}
+			\emph{Surf} Protocol (Gossip)
+			\begin{itemize}
+				\item<5-> Distribute and perform \emph{node health checks}
+				\item<6-> Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
+				% https://developer.hashicorp.com/consul/docs/services/usage/checks
+			\end{itemize}}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \begin{frame}
@@ -87,36 +107,17 @@
 			\end{scope}
 		\end{scope}
 	\end{tikzpicture}
+	\footnote{Based on \autocite[Consul Architecture]{ConsulDoc23}}
 
 	% Agent (Server/Client), Datacenters
 	% Clients are Stateless and Forward RPC calls to Server Agents
 	% Servers participate in Raft Quorum. Thus, they save cluster state (like KV keys)
+	% Health checks are done though gossip and not consul -> less traffic with consul replication
+	% There is no replication of KV store between datacenters, so if a key is stored in a different datacenter, request is forwarded
 \end{frame}
-
-\begin{frame}
-	\frametitle{Consistency}
-	% Two Types: Raft for Consensus, Serf for Gossip
-	\begin{columns}[b]
-		\begin{column}{0.5\textwidth}
-			\emph{Raft} Protocol (Consensus)
-			\begin{itemize}
-				\item Replicated Cluster State
-				\item Example: KV store, service and node IP addresses, configuration
-			\end{itemize}
-		\end{column}
-		\begin{column}{0.5\textwidth}
-			\emph{Surf} Protocol (Gossip)
-			\begin{itemize}
-				\item Distribute and perform \emph{node health checks}
-				\item Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
-				% https://developer.hashicorp.com/consul/docs/services/usage/checks
-			\end{itemize}
-		\end{column}
-	\end{columns}
-\end{frame}
-
 \begin{frame}
 	\frametitle{Raft Consensus}
+	\framesubtitle{Short Overview}
 	\begin{tikzpicture}[remember picture,overlay]
 		\node[xshift=-1.5cm,yshift=-1.5cm](logo) at (current page.north east){%
 		\includegraphics[width=3cm]{assets/raft_logo.pdf}};
@@ -124,10 +125,15 @@
 	\end{tikzpicture}
 
 	\begin{itemize}
-		\item Consensus algorithm for state machine replication
-		\item Not Byzantine Fault Tolerant (leader is trusted)
-		\item 5 Nodes for 1 Node, 7 for 2 Node Crash Tolerance
-		\item Three states
+		\item<1-> Consensus algorithm for state machine replication\footnote{\autocite{raft14}}
+		\item<2-> Not Byzantine Fault Tolerant (leader is trusted)
+		\item<3-> Crash Tolerance: (N/2) + 1
+		\begin{itemize}
+			\item 3 Nodes: 1 Crash
+			\item 5 Nodes: 2 Crashes
+			\item 7 Nodes: 3 Crashes
+		\end{itemize}
+		\item<4-> Three states
 	\end{itemize}
 	% Logo Credits: 
 \end{frame}
@@ -136,42 +142,45 @@
 		\frametitle{Consistency}
 
 		\begin{itemize}
-			\item \emph{Writes}: always sent to leader
-			\item \emph{Reads}: three consistency modes:
-			\begin{description}[labelsep=0.5em]
+			\item<1-> \emph{Writes}: always sent to leader
+			\item<2-> \emph{Reads}: three consistency modes:			\begin{description}[labelsep=0.5em]
 				\setlength\itemsep{0.5em}
-				\item[default] \emph{leader leasing}: leader assumes its role for a specific time window and responds without quorum
+				\item[default]<3-> \emph{leader leasing}: leader assumes its role for a specific time window and responds without quorum
 				\\
 				(However: risk of 2 concurrent leaders $\Rightarrow$ stale reads)
-				\item[consistent] leader has to verify its role before responding
+				\item[consistent]<4-> leader has to verify its role before responding
 %				that they are still the leader 
-				\item[stale] any server agent (leader \& follower) can respond
+				\item[stale]<5-> any server agent (leader \& follower) can respond
 			\end{description}
 		\end{itemize}
-
-				%\textcite[Consensus Protocol]{ConsulDoc}
 \end{frame}
 
 \subsection{Usage}
 
 \begin{frame}[fragile]
 	\frametitle{CLI agent}
+	\framesubtitle{for KV store}
 
 	\begin{columns}[t]
 		\begin{column}{0.45\textwidth}
 			\begin{minted}{bash}
 $ consul agent -dev
 
-# other terminal:
+# other shell:
 $ consul kv put my/key 123
 $ consul kv get my/key
 123
 			\end{minted}
 		\end{column}
-		\begin{column}{0.55\textwidth}
-			CLI or HTTP API
 
-			Responses contain metadata like last writer, ...
+		\begin{column}{0.55\textwidth}
+			\onslide<1->{\begin{block}[KV Store]
+			\begin{itemize}
+				\item<1-> For configuration, locks, metadata, ...
+				\item<2-> Max value size of 512 KB
+				\item<3-> Requests to KV store via CLI or HTTP API
+			\end{itemize}
+		\end{block}}
 			% Metadata response: https://developer.hashicorp.com/consul/api-docs/kv#metadata-response
 		\end{column}
 	\end{columns}
