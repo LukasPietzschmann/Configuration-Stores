@@ -1,14 +1,25 @@
 \subsection{Overview}
 \begin{frame}
 	\frametitle{History}
-	\begin{enumerate}
-		\item December 2006 - first commit
-		\item November 2007 - 0.0.1 on Sourceforge
-		\item June 2008 - moved to Apache
-		\item June 2010 - (Best paper award) Erstes Paper https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf
-		\item November 2010 - ZooKeeper moves to top level project
-		\item Januar 2023 - release-3.8.1
-	\end{enumerate}
+	\talknote{2010: Best paper award}
+	\talknote{Developement activity declined}
+	\begin{columns}[c]
+		\begin{column}{0.75\textwidth}
+			\begin{description}
+				\item [December 2006] First commit
+				\item [November 2007] Version 0.0.1 on Sourceforge
+				\item [June 2008] Moved to Apache
+				\item [June 2010] First Paper~\cite{10.5555/1855840.1855851}
+				\item [November 2010] ZooKeeper becomes a top level project
+				\item [Januar 2023] Version 3.8.1
+			\end{description}
+		\end{column}
+		\begin{column}{0.15\textwidth}
+			\begin{tikzpicture}
+				\sheep[monocle]
+			\end{tikzpicture}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \begin{frame}
@@ -23,6 +34,7 @@
 	draw=black,
 	font=\footnotesize,
 	]
+	\talknote{Whats that fuzz in the beginning}
 	\tikzstyle{small dot}=[fill=black,circle,scale=0.3]
 	\href{https://trends.google.com/trends/explore?cat=5&date=all&q=Zookeeper}{
 		\begin{tikzpicture}
@@ -48,6 +60,8 @@
 \begin{frame}
 	\frametitle{What is ZooKeeper?}
 	\framesubtitle{ZooKeeper is \ldots}
+	\talknote{Zookeeper does a lot of stuff}
+	\talknote{We are mostly interested in the configuration stuff}
 	\textcolor<2>{gray}{\ldots~a (1)~highly available, (2)~scalable,
 		(3)~\textcolor<2>{accent}{distributed}, (4)~\textcolor<2>{accent}{configuration},
 		(5)~consensus, (6)~group membership, (7)~leader election, (8)~naming, and
@@ -57,6 +71,8 @@
 \begin{frame}
 	\frametitle{What is ZooKeeper again?}
 	\framesubtitle{Use cases}
+	\talknote{Zookeeper is more a framework to solve challenging aspects of distributed
+	computing}
 	\centering
 	\begin{tcolorbox}[colback=accent!5!white,colframe=accent!75!black,width=.7\linewidth, title=Solve various coordination problems in large distributed system]
 		\begin{columns}[c]
@@ -82,6 +98,13 @@
 \subsection{Data model}
 \begin{frame}
 	\frametitle{Data model}
+	\talknote{Looks like file system}
+	\talknote{Actually namespaces}
+	\talknote{Nodes contain: acl, time stamps}
+	\talknote<2->{persistent: lifetime of ZooKeeper’s namespace, e.g config data}
+	\talknote<2->{ephemeral: deleted when client dies, live check}
+	\talknote<2->{sequential: both can be. sequencenumber. used for locking, blocking}
+	\talknote<3>{Nodes are not used to hold much data}
 	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
 			\tikzstyle{every node}=[roundednode]
@@ -102,6 +125,7 @@
 					\draw [textarrow] (SD) to (C);
 					\draw [textarrow] (SC) to [bend left=20] (D);
 				\end{scope}
+				\mode<beamer>{
 				\begin{scope}[visible on=<3>]
 					\node [draw=none] (SZ) [right=of Z, xshift=1cm] {Znodes};
 
@@ -110,12 +134,15 @@
 					\draw [textarrow] (SZ) to (C);
 					\draw [textarrow] (SZ) to [bend left=55] (D);
 				\end{scope}
+			}
 			\end{tikzpicture}
 		\end{column}
 		\begin{column}{0.45\textwidth}
 			\begin{itemize}
-				\item \only<1>{File system nodes} \only<2->{\textcolor{gray}{\st{File system nodes}} Namespaces}
-				\item<3-> Three types of Znodes:
+				\mode<beamer>{\item \only<1>{File system nodes}
+					\only<2->{\textcolor{gray}{\st{File system nodes}} Namespaces}}
+				\mode<handout>{\item  Namespaces}
+					\item<3-> Three types of Znodes:
 					\begin{itemize}
 						\item<3-> Persistent
 						\item<3-> Ephemeral
@@ -129,6 +156,9 @@
 
 \begin{frame}
 	\frametitle{Operations}
+	\talknote<1>{CRUD}
+	\talknote<2>{only complete updates (as name implies)}
+	\talknote<3>{Sync synchronizes client with leader}
 	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
 			\onslide<1->{\begin{block}[Znodes]
@@ -171,13 +201,15 @@
 								child [visible on=<5->]{node (DD) {Daisy}}
 							}
 					};
-				\duck [scale=.5, xshift=3cm, yshift=-3cm, name=billy, sunglasses=black] (Duck)
+				\duck [scale=.5, xshift=4cm, yshift=-2cm, name=billy, sunglasses=black] (Duck)
 
 				\node [draw=none, visible on=<2>] (B) [right=of R, xshift=1cm, yshift=1cm] {Billy};
 				\draw [textarrow, visible on=<2>] (B) to (billy-head);
 
-				\draw [arrow, visible on=<6>] (DD) to [bend right=20] (billy-wing);
-				\draw [arrow, visible on=<{4-5,7-}>] (billy-wing) to (C);
+				\draw [arrow, visible on=<6>] (DD) to [bend right=20] node [draw=none,
+				fill=none, sloped, midway, below] {notify} (billy-wing);
+				\draw [arrow, visible on=<{4-5,7-}>] (billy-wing) to node [draw=none,
+				fill=none,sloped,midway,above] {watch} (C);
 			\end{tikzpicture}
 		\end{column}
 		\begin{column}{0.65\textwidth}
@@ -201,6 +233,8 @@
 
 \subsection{Architecture}
 \begin{frame}
+	\talknote{Mode with one server: testing debugging}
+	\talknote{Leader election}
 	\contourlength{.09em}
 	\frametitle{Architecture}
 	\centering
@@ -250,6 +284,8 @@
 	\frametitle{Architecture}
 	\framesubtitle{An example}
 	\centering
+	\talknote{Replicated across all servers}
+	\talknote{n/2 + 1 like raft consensus}
 	\begin{tikzpicture}
 		\begin{scope}
 			\node [roundednode] (S1) [] {Server 1};
@@ -292,7 +328,7 @@
 		\begin{column}{0.65\textwidth}
 			\begin{tikzpicture}[level distance=0.8cm, sibling distance=1.4cm, grow'=right, nodes=right]
 				\node (R) {/}
-				child {node [] {users}
+				child {node {home}
 						child {node {lukas}
 								child {node {nvim}
 										child {node {expandtab: false}}

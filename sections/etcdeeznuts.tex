@@ -58,6 +58,16 @@
 \begin{frame}
 	\frametitle{Service discovery}
 	\centering
+	\mode<handout>{
+	\begin{tikzpicture}
+		\node [roundednode] (PC) {Product-catalog-0};
+		\node [roundednode] (ETC) [draw = accent, fill=accent!10, right=of PC, xshift=2.5cm] {etcd};
+
+		\draw [arrow, visible on=<3>] (PC) to node [anchor=south] {get \texttt{/svc/db/}} (ETC);
+		\draw [arrow, visible on=<4>] (ETC) to [bend left=40] node [sloped, below, midway] {IP + Port} (PC);
+	\end{tikzpicture}
+	}
+	\mode<beamer>{
 	\begin{tikzpicture}
 		\node [roundednode] (PC) {Product-catalog-0};
 		\node [draw=none, visible on=<2>] (T) [above=of PC, yshift=.5cm, xshift=.7cm] {Where is the DB?};
@@ -68,6 +78,7 @@
 		\draw [arrow, visible on=<3>] (PC) to node [anchor=south] {get \texttt{/svc/db/}} (ETC);
 		\draw [arrow, visible on=<4>] (ETC) to [bend left=40] node [sloped, below, midway] {IP + Port} (PC);
 	\end{tikzpicture}
+	}
 \end{frame}
 
 \begin{frame}
@@ -102,6 +113,18 @@
 \begin{frame}
 	\frametitle{Configuration management}
 	\centering
+	\mode<handout>{
+	\begin{tikzpicture}[node distance=2cm]
+		\node [roundednode] (ETC) [draw=accent,fill=accent!10] {etcd};
+		\node [roundednode] (IK0) [above=of ETC, yshift=.5cm] {Inventory-keeper-0};
+		\draw [arrow] (IK0) to node[anchor=west, yshift=5mm] {(1) Put \texttt{/cfg/inv/item2/max_capacity 100}} (ETC);
+		\draw [arrow] (IK0) to node [anchor=west]{(2) Watch \texttt{/cfg/inv/item2/max_capacity}} (ETC);
+		\node [roundednode] (ADM) [right=of ETC, xshift=3.4cm] {Admin};
+		\draw [arrow] (ADM) to node[anchor=north] {Put \texttt{../max_capacity 200}}(ETC);
+		\draw [arrow] (ETC) to node[anchor=west, yshift=-5mm] {(3) \texttt{/cfg/inv/item2/max_capacity 200 }} (IK0);
+	\end{tikzpicture}
+	}
+	\mode<beamer>{
 	\begin{tikzpicture}[node distance=2cm]
 		\node [roundednode] (ETC) [draw=accent, fill=accent!10] {etcd};
 		\node [roundednode] (IK0) [above=of ETC, yshift=.5cm] {Inventory-keeper-0};
@@ -110,4 +133,5 @@
 		\draw [arrow, visible on=<3>] (ADM) to node[anchor=north]{Put \texttt{../max_capacity 200}}(ETC);
 		\draw [arrow, visible on=<4>] (ETC) to node[anchor=west, visible on=<4->]{\texttt{/cfg/inv/item2/max_capacity 200 }} (IK0);
 	\end{tikzpicture}
+	}
 \end{frame}

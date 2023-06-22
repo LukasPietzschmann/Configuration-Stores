@@ -7,6 +7,7 @@
 \usepackage{tikzducks}
 \usepackage{soul}
 \usepackage{pgf-umlsd}
+\usepackage{tikzlings-sheep}
 
 \usetikzlibrary{trees}
 
@@ -15,7 +16,11 @@
 \usegdlibrary{layered}
 \usegdlibrary {force}
 
-\usepackage{pdfpc}
+\usepackage[
+	duration=30,
+	enduserslide=26,
+	hidenotes
+]{pdfpc}
 
 \addbibresource{refs.bib}
 
@@ -27,7 +32,7 @@
 \title[Highly Available Distributed Config Stores]{Highly Available Distributed Configuration Stores}
 \author[Kai, Tim, Lukas]{Kai Anter, Tim Heibel, Lukas Pietzschmann}
 \subtitle{}
-\email{}
+\email{lukas.pietzschmann@uni-ulm.de; kai.anter@uni-ulm.de; tim.heibel@uni-ulm.de}
 \institute{Institute of Distributed Systems}
 \uni{University of Ulm}
 \location{Ulm}
@@ -50,6 +55,17 @@
 \section{ZooKeeper}
 \input{sections/zookeeper.tex}
 
+\section{Summary}
+\begin{frame}
+	\frametitle{Take-home message}
+	\begin{itemize}
+		\item [\triangleright] If you need \emph{all inclusive} service discovery framework: Consul
+		\item [\triangleright] If you need a fast distributed key-value store: etcd
+		\item [\triangleright] If you like legacy systems: ZooKeeper
+	\end{itemize}
+\end{frame}
+
+
 \section{References}
 \begin{frame}[allowframebreaks]
 	\frametitle{References}
@@ -65,6 +81,11 @@
 	\frametitle{References}
 	\framesubtitle{ZooKeeper}
 	\printbibliography[keyword={lukas}]
+\end{frame}
+\begin{frame}[allowframebreaks]
+	\frametitle{References}
+	\framesubtitle{General}
+	\printbibliography[keyword={gen}]
 \end{frame}
 
 \end{document}
