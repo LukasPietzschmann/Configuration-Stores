@@ -48,9 +48,9 @@
 \begin{frame}
 	\frametitle{Architecture}
 	\begin{itemize}
-		\item Distributed: operates across multiple nodes (cluster)
-		\item Consistency ensured by Raft algorithm
-		\item leader election if current leader crashes
+		\item Operates across multiple nodes (cluster)
+		\item Employs Raft algorithm
+		\item Leader election if current leader crashes
 		\item [\triangleright] high availability, consistency, distribution
 	\end{itemize}
 \end{frame}
@@ -59,10 +59,10 @@
 	\frametitle{Service discovery}
 	\centering
 	\begin{tikzpicture}
-		\node [roundednode] (PC) {Product catalog};
+		\node [roundednode] (PC) {Product-catalog-0};
 		\node [draw=none, visible on=<2>] (T) [above=of PC, yshift=.5cm, xshift=.7cm] {Where is the DB?};
 		\node [draw=none, visible on=<5>] (T) [above=of PC, yshift=.5cm, xshift=.7cm] {Thanks mate!};
-		\node [roundednode] (ETC) [right=of PC, xshift=2.5cm] {etcd};
+		\node [roundednode] (ETC) [draw = accent, fill=accent!10, right=of PC, xshift=2.5cm] {etcd};
 
 		\draw [draw=gray, visible on=<{2,5}>] (T) to (PC);
 		\draw [arrow, visible on=<3>] (PC) to node [anchor=south] {get \texttt{/svc/db/}} (ETC);
