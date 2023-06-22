@@ -41,13 +41,17 @@
 		\begin{column}{0.5\textwidth}
 			\begin{block}[Surf Protocol (Gossip)]
 				\begin{itemize}
-					\item<5-> Perform and distribute \emph{node health checks}
-					\item<6-> Examples for health checks: HTTP GET Request, gRPC, TCP, UDP
+					\item<5-> Perform and distribute \emph{service health checks}
+					\item<6-> Examples for health checks: via HTTP GET Request, gRPC, TCP, UDP
 						% https://developer.hashicorp.com/consul/docs/services/usage/checks
 				\end{itemize}
 			\end{block}
 		\end{column}
 	\end{columns}
+
+	\talknote{Raft: High Consistency, but Performance worsens with increasing Node Count (Recommended: 7 nodes)}
+	\talknote{Surf: Only have eventual consistency, but scales better with more Nodes -> up to 5000 clients}
+
 \end{frame}
 
 \begin{frame}
