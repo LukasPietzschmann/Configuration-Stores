@@ -1,6 +1,10 @@
 \documentclass[aspectratio=169, usepdftitle=false]{beamer}
 
-\usepackage[english, secslide, subsecslide]{awesome-beamer/beamerthemeawesome}
+\makeatletter
+\appto\input@path{{awesome-beamer}, {smile}}
+\makeatother
+
+\usepackage[english, secslide, subsecslide]{beamerthemeawesome}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
 \usepackage{microtype}
@@ -14,7 +18,7 @@
 \usetikzlibrary{graphs, graphdrawing}
 \usetikzlibrary{mindmap}
 \usegdlibrary{layered}
-\usegdlibrary {force}
+\usegdlibrary{force}
 
 \usepackage[
 	duration=30,
@@ -28,11 +32,12 @@
 	numbers=none,
 	frame=none
 }
+\usemintedstyle{bw}
 
 \title[Highly Available Distributed Config Stores]{Highly Available Distributed Configuration Stores}
 \author[Kai, Tim, Lukas]{Kai Anter, Tim Heibel, Lukas Pietzschmann}
 \subtitle{}
-\email{lukas.pietzschmann@uni-ulm.de; kai.anter@uni-ulm.de; tim.heibel@uni-ulm.de}
+\email{}
 \institute{Institute of Distributed Systems}
 \uni{University of Ulm}
 \location{Ulm}

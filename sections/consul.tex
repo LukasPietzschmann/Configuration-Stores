@@ -48,10 +48,6 @@
 			\end{block}
 		\end{column}
 	\end{columns}
-
-	\talknote{Raft: High Consistency, but Performance worsens with increasing Node Count (Recommended: 7 nodes)}
-	\talknote{Surf: Only have eventual consistency, but scales better with more Nodes -> up to 5000 clients}
-
 \end{frame}
 
 \begin{frame}
@@ -180,7 +176,7 @@
 
 	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
-			\begin{minted}{bash}
+						\begin{minted}{bash}
 $ consul agent -dev
 
 # other shell:
@@ -205,7 +201,7 @@ $ consul kv get my/key
 
 \begin{frame}[fragile]
 	\frametitle{Long Polling}
-	\begin{minted}{bash}
+		\begin{minted}{bash}
 $ curl -v http://localhost:8500/v1/kv/my/key
 # ...
 < X-Consul-Index: 19

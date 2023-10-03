@@ -1,8 +1,6 @@
 \subsection{Overview}
 \begin{frame}
 	\frametitle{History}
-	\talknote{2010: Best paper award}
-	\talknote{Developement activity declined}
 	\begin{columns}[c]
 		\begin{column}{0.75\textwidth}
 			\begin{description}
@@ -34,7 +32,6 @@
 	draw=black,
 	font=\footnotesize,
 	]
-	\talknote{Whats that fuzz in the beginning}
 	\tikzstyle{small dot}=[fill=black,circle,scale=0.3]
 	\href{https://trends.google.com/trends/explore?cat=5&date=all&q=Zookeeper}{
 		\begin{tikzpicture}
@@ -60,8 +57,6 @@
 \begin{frame}
 	\frametitle{What is ZooKeeper?}
 	\framesubtitle{ZooKeeper is \ldots}
-	\talknote{Zookeeper does a lot of stuff}
-	\talknote{We are mostly interested in the configuration stuff}
 	\textcolor<2>{gray}{\ldots~a (1)~highly available, (2)~scalable,
 		(3)~\textcolor<2>{accent}{distributed}, (4)~\textcolor<2>{accent}{configuration},
 		(5)~consensus, (6)~group membership, (7)~leader election, (8)~naming, and
@@ -71,8 +66,6 @@
 \begin{frame}
 	\frametitle{What is ZooKeeper again?}
 	\framesubtitle{Use cases}
-	\talknote{Zookeeper is more a framework to solve challenging aspects of distributed
-	computing}
 	\centering
 	\begin{tcolorbox}[colback=accent!5!white,colframe=accent!75!black,width=.7\linewidth, title=Solve various coordination problems in large distributed system]
 		\begin{columns}[c]
@@ -98,13 +91,6 @@
 \subsection{Data model}
 \begin{frame}
 	\frametitle{Data model}
-	\talknote{Looks like file system}
-	\talknote{Actually namespaces}
-	\talknote{Nodes contain: acl, time stamps}
-	\talknote<2->{persistent: lifetime of ZooKeeper’s namespace, e.g config data}
-	\talknote<2->{ephemeral: deleted when client dies, live check}
-	\talknote<2->{sequential: both can be. sequencenumber. used for locking, blocking}
-	\talknote<3>{Nodes are not used to hold much data}
 	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
 			\tikzstyle{every node}=[roundednode]
@@ -156,9 +142,6 @@
 
 \begin{frame}
 	\frametitle{Operations}
-	\talknote<1>{CRUD}
-	\talknote<2>{only complete updates (as name implies)}
-	\talknote<3>{Sync synchronizes client with leader}
 	\begin{columns}[c]
 		\begin{column}{0.45\textwidth}
 			\onslide<1->{\begin{block}[Znodes]
@@ -233,8 +216,6 @@
 
 \subsection{Architecture}
 \begin{frame}
-	\talknote{Mode with one server: testing debugging}
-	\talknote{Leader election}
 	\contourlength{.09em}
 	\frametitle{Architecture}
 	\centering
@@ -284,8 +265,6 @@
 	\frametitle{Architecture}
 	\framesubtitle{An example}
 	\centering
-	\talknote{Replicated across all servers}
-	\talknote{n/2 + 1 like raft consensus}
 	\begin{tikzpicture}
 		\begin{scope}
 			\node [roundednode] (S1) [] {Server 1};
