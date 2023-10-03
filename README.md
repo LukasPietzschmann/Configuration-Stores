@@ -1,4 +1,4 @@
-# ADIS Lightning Talk
+# Configuration stores
 
 This repo contains the slides for a small presentation about highly available
 distributed configuration stores.
