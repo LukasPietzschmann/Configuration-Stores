@@ -1,7 +1,8 @@
 # ADIS Lightning Talk
 
+This repo contains the slides for a small presentation about highly available
+distributed configuration stores.
+
 ## How to build
-1. Clone the repo (Note: you have to use `--recursive` to get the submodules, too)
-2. Go to `./awesome-beamer/beamerthemeawesome.sty` and change line 54 from `]{smile}` to `]{smile/smile}`
-3. Use your favourite LaTeX compiler (but be aware that you have to run it multiple times)
-4. Enjoy the beautiful typesetting
+1. You need to clone using the `--recursive` switch
+2. Just call `latexmk` on the `main.tex` file
